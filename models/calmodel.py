@@ -12,7 +12,7 @@ import os
 
 # Import custom modules
 from models import audiomodel
-from functions import resource_path
+from functions import functions
 
 
 #########
@@ -30,7 +30,7 @@ class CalModel:
         """
         print("calmodel: Locating calibration file...")
         if self.sessionpars['cal_file'].get() == 'cal_stim.wav':
-            self.cal_file = resource_path.resource_path('cal_stim.wav')
+            self.cal_file = functions.resource_path('cal_stim.wav')
             #self.cal_file = self.resource_path('cal_stim.wav')
             file_exists = os.access(self.cal_file, os.F_OK)
             if not file_exists:
@@ -41,37 +41,42 @@ class CalModel:
         print(f"calmodel: Using {self.cal_file}")
 
 
-    def _calc_level(self):
-        """ Calculate and save adjusted presentation level
+    def _calc_offset(self):
+        """ Calculate adjusted presentation level
         """
         # Calculate SLM offset
         print("\ncalmodel: Calculating new presentation level...")
-        slm_offset = self.sessionpars['slm_reading'].get() - self.sessionpars['scaling_factor'].get()
+        slm_offset = self.sessionpars['slm_reading'].get() - self.sessionpars['cal_scaling_factor'].get()
+        self.sessionpars['slm_offset'].set(slm_offset)
         # Provide console feedback
         print(f"calmodel: Starting level (dB FS): " +
-              f"{self.sessionpars['scaling_factor'].get()}")
+              f"{self.sessionpars['cal_scaling_factor'].get()}")
         print(f"calmodel: SLM reading (dB): " +
               f"{self.sessionpars['slm_reading'].get()}")
         print(f"calmodel: SLM offset: {slm_offset}")
 
-        # Calculate new presentation level
-        self.sessionpars['adj_pres_level'].set(
-            self.sessionpars['pres_level'].get() - slm_offset)
-        print(f"calmodel: Desired level (dB): " +
-              f"{self.sessionpars['pres_level'].get()}")
-        print(f"calmodel: New presentation level: " +
-            f"{self.sessionpars['adj_pres_level'].get()}")
+        # SLM offset not yet saved!
+        # This must happen in controller using: self._save_sessionpars()
 
-        # Save SLM offset and updated level
-        #self.app._save_sessionpars()
-        # This must happen in controller...
+
+    def _calc_level(self, desired_spl):
+        # Calculate presentation level
+        self.sessionpars['desired_spl'].set(desired_spl)
+        self.sessionpars['scaling_factor'].set(desired_spl - self.sessionpars['slm_offset'].get())
+        print(f"calmodel: Desired level (dB): " +
+              f"{self.sessionpars['desired_spl'].get()}")
+        print(f"calmodel: Scaling factor: " +
+            f"{self.sessionpars['scaling_factor'].get()}")
+
+        # Calculated level not yet saved! 
+        # This must happen in controller using: self._save_sessionpars()
 
 
     def play_cal(self):
         # Present calibration file
         self.cal = audiomodel.Audio(file_path=self.cal_file)
         self.cal.play(
-            level=self.sessionpars['scaling_factor'].get(),
+            level=self.sessionpars['cal_scaling_factor'].get(),
             device_id=self.sessionpars['audio_device'].get()
         )
 

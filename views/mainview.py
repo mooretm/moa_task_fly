@@ -49,7 +49,7 @@ class MainFrame(ttk.Frame):
 
         # Main container
         frm_main = ttk.Frame(self)
-        frm_main.grid(column=5, row=5, **options)
+        frm_main.grid(column=5, row=5)
 
         # Arrow buttons frame
         self.frm_arrows = ttk.LabelFrame(frm_main, text="Presentation Controls")
@@ -118,17 +118,18 @@ class MainFrame(ttk.Frame):
         """
         # Create stimulus on first "START"
         if self.flag == 'ready':
-            print(f"\nmainview: Task started")
+            print(f"\nmainview: New trial started")
             print("mainview: Sending create stimulus event to controller")
             self.event_generate('<<MainStart>>')
             self.flag = 'running'
+        elif self.flag == 'running':
+            self.event_generate('<<MainPlayAudio>>')
         
-        # Send play audio event to app
+        # Update buttons
         self.button_text.set("Repeat")
         self.btn_submit.config(state="enabled")
-        self.event_generate('<<MainPlayAudio>>')
+        
 
-    
     def _on_submit(self):
         # Send save data event to app
         self.button_text.set("Start")

@@ -9,8 +9,8 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 
-# Import system packages
-import os
+# Import custom modules
+from functions import functions
 
 
 #########
@@ -32,6 +32,7 @@ class CalibrationDialog(tk.Toplevel):
 
         # Window setup
         self.withdraw()
+        self.resizable(False, False)
         self.focus()
         self.title("Calibration")
         self.grab_set()
@@ -59,11 +60,13 @@ class CalibrationDialog(tk.Toplevel):
 
         # Presentation controls
         lfrm_playback = ttk.Labelframe(self, text='Playback Controls')
-        lfrm_playback.grid(column=5, columnspan=10, row=10, **options, sticky='we')
+        lfrm_playback.grid(column=5, columnspan=10, row=10, **options, 
+                           sticky='we')
 
         # SLM reading controls
         lfrm_slm = ttk.Labelframe(self, text='Measured Level')
-        lfrm_slm.grid(column=5, columnspan=10, row=15, **options, sticky='we')
+        lfrm_slm.grid(column=5, columnspan=10, row=15, **options, 
+                      sticky='we')
 
 
         ##############################
@@ -71,27 +74,33 @@ class CalibrationDialog(tk.Toplevel):
         ##############################
         # Radio buttons
         # Default white noise stimulus
-        rad_wgn = ttk.Radiobutton(lfrm_load, text="White Noise", takefocus=0,
-            variable=self.cal_var, value='wgn', command=self._cal_type)
+        rad_wgn = ttk.Radiobutton(lfrm_load, text="1 kHz Tone", 
+            takefocus=0, variable=self.cal_var, value='wgn', 
+            command=self._cal_type)
         rad_wgn.grid(column=5, row=0, columnspan=10, sticky='w', 
             **options_small)
 
         # Upload custom calibration stimulus
-        rad_custom = ttk.Radiobutton(lfrm_load, text="Custom File", takefocus=0,
-            variable=self.cal_var, value='custom', command=self._cal_type)
+        rad_custom = ttk.Radiobutton(lfrm_load, text="Custom File", 
+            takefocus=0, variable=self.cal_var, value='custom', 
+            command=self._cal_type)
         rad_custom.grid(column=5, row=1, columnspan=10, sticky='w', 
             **options_small)
 
         # File path
-        self.lbl_calfile1 = ttk.Label(lfrm_load, text='File:', state='disabled')
-        self.lbl_calfile1.grid(column=5, row=5, sticky='w', **options_small)
-        self.lbl_calfile2 = ttk.Label(lfrm_load, textvariable=self.cal_path, borderwidth=2, 
+        self.lbl_calfile1 = ttk.Label(lfrm_load, text='File:', 
+                                      state='disabled')
+        self.lbl_calfile1.grid(column=5, row=5, sticky='w', 
+                               **options_small)
+        self.lbl_calfile2 = ttk.Label(lfrm_load, 
+            textvariable=self.cal_path, borderwidth=2, 
             relief="solid", width=60, state='disabled')
-        self.lbl_calfile2.grid(column=10, row=5, sticky='w', **options_small)
+        self.lbl_calfile2.grid(column=10, row=5, sticky='w', 
+                               **options_small)
 
         # Browse button
-        self.btn_browse = ttk.Button(lfrm_load, text="Browse", state='disabled',
-            takefocus=0, command=self._load_cal)
+        self.btn_browse = ttk.Button(lfrm_load, text="Browse", 
+            state='disabled', takefocus=0, command=self._load_cal)
         self.btn_browse.grid(column=10, row=10, sticky='w', 
             **options_small)
         
@@ -101,8 +110,10 @@ class CalibrationDialog(tk.Toplevel):
             self._set_custom_cntrls_status('disabled')
         else:
             self.cal_var.set('custom')
-            self.cal_path.set(os.path.basename(
-                self.sessionpars['cal_file'].get()))
+            # Truncate path to <=60 characters
+            short_path = functions.truncate_path(
+                self.sessionpars['cal_file'].get())
+            self.cal_path.set(short_path)
             self._set_custom_cntrls_status('enabled')
 
 
@@ -112,24 +123,28 @@ class CalibrationDialog(tk.Toplevel):
         # Scaling factor
         ttk.Label(lfrm_playback, text="Level (dB):").grid(
             column=5, row=5, sticky='e', **options_small)
-        ent_slm = ttk.Entry(lfrm_playback, textvariable=self.sessionpars['scaling_factor'],
-            width=6)
+        ent_slm = ttk.Entry(lfrm_playback, 
+            textvariable=self.sessionpars['cal_scaling_factor'], width=6)
         ent_slm.grid(column=10, row=5, sticky='w', **options_small)
  
         # Play calibration stimulus
-        btn_play = ttk.Button(lfrm_playback, text="Play", command=self._on_play)
-        btn_play.grid(column=5, row=10, columnspan=6, sticky='ew', **options_small)
+        btn_play = ttk.Button(lfrm_playback, text="Play", 
+                              command=self._on_play)
+        btn_play.grid(column=5, row=10, columnspan=6, sticky='ew', 
+                      **options_small)
 
         # Stop calibration stimulus
-        btn_stop = ttk.Button(lfrm_playback, text="Stop", command=self._on_stop)
-        btn_stop.grid(column=5, row=15, columnspan=6, sticky='ew', **options_small)
+        btn_stop = ttk.Button(lfrm_playback, text="Stop", 
+                              command=self._on_stop)
+        btn_stop.grid(column=5, row=15, columnspan=6, 
+                      sticky='ew', **options_small)
 
 
         ##########################
         # Measured Level Widgets #
         ##########################
         # SLM reading entry box
-        ttk.Label(lfrm_slm, text="SLM Reading (dB):").grid(
+        ttk.Label(lfrm_slm, text="Magnetic Field Strength (dB SPL):").grid(
             column=5, row=15, sticky='e', **options_small)
         self.ent_slm = ttk.Entry(lfrm_slm, 
             textvariable=self.sessionpars['slm_reading'],
@@ -139,7 +154,8 @@ class CalibrationDialog(tk.Toplevel):
         # Submit button
         self.btn_submit = ttk.Button(lfrm_slm, text="Submit", 
             command=self._on_submit, state='disabled')
-        self.btn_submit.grid(column=5, columnspan=10, row=20, **options_small)
+        self.btn_submit.grid(column=5, columnspan=10, row=20, 
+            sticky='w', **options_small)
 
 
     #############
@@ -188,8 +204,10 @@ class CalibrationDialog(tk.Toplevel):
         """ File dialog for custom calibration file
         """
         self.sessionpars['cal_file'].set(filedialog.askopenfilename())
-        self.cal_path.set(
-            os.path.basename(self.sessionpars['cal_file'].get()))
+
+        short_path = functions.truncate_path(
+            self.sessionpars['cal_file'].get())
+        self.cal_path.set(short_path)
 
 
     def _on_play(self):
@@ -197,7 +215,10 @@ class CalibrationDialog(tk.Toplevel):
         """
         self.parent.event_generate('<<CalPlay>>')
         self.btn_submit.config(state='enabled')
-        self.ent_slm.config(state='enabled')
+        
+        # Keep measured SLM value disabled
+        # Force to 82 dB SPL
+        #self.ent_slm.config(state='enabled')
 
 
     def _on_stop(self):

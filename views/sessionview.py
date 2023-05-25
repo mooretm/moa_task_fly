@@ -10,6 +10,9 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog
 
+# Import custom modules
+from functions import functions
+
 
 #########
 # BEGIN #
@@ -23,6 +26,7 @@ class SessionDialog(tk.Toplevel):
         self.sessionpars = sessionpars
 
         self.withdraw()
+        self.resizable(False, False)
         self.title("Session Parameters")
         self.grab_set()
 
@@ -32,7 +36,7 @@ class SessionDialog(tk.Toplevel):
         # Center the session dialog window
         self.center_window()
 
-    
+
     def _draw_widgets(self):
             #################
             # Create Frames #
@@ -71,7 +75,7 @@ class SessionDialog(tk.Toplevel):
             ttk.Entry(frm_session, width=20, 
                 textvariable=self.sessionpars['condition']
                 ).grid(row=10, column=10, sticky='w')
-            
+
             # Trials
             ttk.Label(frm_session, text="Trials:"
                 ).grid(row=15, column=5, sticky='e', **widget_options)
@@ -81,27 +85,57 @@ class SessionDialog(tk.Toplevel):
 
 
             # Stimulus Paramters Frame
+            # Column 1
+            # Big step
+            ttk.Label(frm_options, text="Big Step (dB):"
+                ).grid(row=5, column=5, sticky='e', **widget_options)
+            ttk.Entry(frm_options, width=10, 
+                textvariable=self.sessionpars['big_step']
+                ).grid(row=5, column=10, sticky='w')
+
+            # Small step
+            ttk.Label(frm_options, text="Small Step (dB):"
+                ).grid(row=10, column=5, sticky='e', **widget_options)
+            ttk.Entry(frm_options, width=10, 
+                textvariable=self.sessionpars['small_step']
+                ).grid(row=10, column=10, sticky='w')
+            
+            # Max output
+            ttk.Label(frm_options, text="Max Output (dB):"
+                ).grid(row=15, column=5, sticky='e', **widget_options)
+            ttk.Entry(frm_options, width=10, 
+                textvariable=self.sessionpars['max_output']
+                ).grid(row=15, column=10, sticky='w')
+            
+            # Min output
+            ttk.Label(frm_options, text="Min Output (dB):"
+                ).grid(row=20, column=5, sticky='e', **widget_options)
+            ttk.Entry(frm_options, width=10, 
+                textvariable=self.sessionpars['min_output']
+                ).grid(row=20, column=10, sticky='w')
+
+            # Column 2
             # ISI
             ttk.Label(frm_options, text="ISI (ms):"
-                ).grid(row=5, column=5, sticky='e', **widget_options)
-            ttk.Entry(frm_options, width=20, 
+                ).grid(row=5, column=15, sticky='e', **widget_options)
+            ttk.Entry(frm_options, width=10, 
                 textvariable=self.sessionpars['isi']
-                ).grid(row=5, column=10, sticky='w')
+                ).grid(row=5, column=20, sticky='w')
 
             # Jitter
             ttk.Label(frm_options, text="Jitter (ms):"
-                ).grid(row=10, column=5, sticky='e', **widget_options)
-            ttk.Entry(frm_options, width=20, 
+                ).grid(row=10, column=15, sticky='e', **widget_options)
+            ttk.Entry(frm_options, width=10, 
                 textvariable=self.sessionpars['jitter']
-                ).grid(row=10, column=10, sticky='w')
-            
+                ).grid(row=10, column=20, sticky='w')
+
             # Train Reps
             ttk.Label(frm_options, text="Train Reps:"
-                ).grid(row=15, column=5, sticky='e', **widget_options)
-            ttk.Entry(frm_options, width=20, 
+                ).grid(row=15, column=15, sticky='e', **widget_options)
+            ttk.Entry(frm_options, width=10, 
                 textvariable=self.sessionpars['train_reps']
-                ).grid(row=15, column=10, sticky='w')
-
+                ).grid(row=15, column=20, sticky='w')
+            
 
             # File Browsing Frame
             # Stimulus file
@@ -110,7 +144,7 @@ class SessionDialog(tk.Toplevel):
             # Get audio directory from sessionpars dict
             full_stim_path = self.sessionpars['stim_file_path'].get()
             # Truncate to fit in label
-            short_stim_path = self._truncate_path(full_stim_path)
+            short_stim_path = functions.truncate_path(full_stim_path)
             # Create textvariable
             self.stim_var = tk.StringVar(value=short_stim_path)
             ttk.Label(frm_stimpath, textvariable=self.stim_var, 
@@ -154,27 +188,14 @@ class SessionDialog(tk.Toplevel):
         self.deiconify()
 
 
-    def _truncate_path(self, long_path):
-        """ Truncate path (if necessary) and return value
-        """
-        if len(long_path) > 60:
-            short = '...' + long_path[-60:]
-            return short
-        else:
-            if long_path == "":
-                return 'Please select a .wav file'
-            else:
-                return long_path
-
-
     def _get_stimulus_file(self):
-        """ Get path to matrix file
+        """ Get path to stimulus file
         """
         # Get file from dialog
         filename = filedialog.askopenfilename(title="Stimulus File", filetypes=[("WAV", "*.wav")])
         # Set file plus path to sessionpars
         self.sessionpars['stim_file_path'].set(filename)
-        short_filename = self._truncate_path(filename)
+        short_filename = functions.truncate_path(filename)
         self.stim_var.set(short_filename)
 
 

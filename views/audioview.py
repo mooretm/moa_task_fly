@@ -30,6 +30,7 @@ class AudioDialog(tk.Toplevel):
 
         # Window setup
         self.withdraw()
+        self.resizable(False, False)
         self.focus()
         self.title("Audio")
         self.grab_set() # Disable root window (toplevel as modal window)

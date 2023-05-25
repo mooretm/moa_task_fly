@@ -9,7 +9,6 @@ from pathlib import Path
 
 # Import data handling packages
 import json
-from glob import glob
 
 
 #########
@@ -18,28 +17,38 @@ from glob import glob
 class SessionParsModel:
     # Define dictionary items
     fields = {
+        # Session variables
         'subject': {'type': 'str', 'value': '999'},
         'condition': {'type': 'str', 'value': 'TEST'},
-        'pres_level': {'type': 'float', 'value': 65},
+        'pres_level': {'type': 'float', 'value': 65.0},
         'num_trials': {'type': 'int', 'value': 1},
-        #'randomize': {'type': 'int', 'value': 0},
-        #'repetitions': {'type': 'int', 'value': 1},
-        'speaker_number': {'type': 'int', 'value': 1},
-        #'audio_files_path': {'type': 'str', 'value': 'Please select a folder'},
-        #'matrix_file_path': {'type': 'str', 'value': 'Please select a file'},
         
+        # Stimulus variables
         'isi': {'type': 'float', 'value': 60.0},
         'jitter': {'type': 'float', 'value': 0.5},
         'train_reps': {'type': 'int', 'value': 10},
-
+        'big_step': {'type': 'float', 'value': 5.0},
+        'small_step': {'type': 'float', 'value': 2.5},
+        'max_output': {'type': 'float', 'value': 85.0},
+        'min_output': {'type': 'float', 'value': 50.0},
         'stim_file_path': {'type': 'str', 'value': 'Please select a .wav file'},
+
+        # Audio device variables
         'audio_device': {'type': 'int', 'value': 999},
-        'raw_lvl': {'type': 'float', 'value': -30},
-        'slm_reading': {'type': 'float', 'value': 70},
-        'adj_pres_level': {'type': 'float', 'value': -30},
-        'scaling_factor': {'type': 'float', 'value': -30},
-        'cal_file': {'type': 'str', 'value': 'cal_stim.wav'}
+        'speaker_number': {'type': 'int', 'value': 1},
+
+        # Calibration variables
+        'cal_scaling_factor': {'type': 'float', 'value': -30.0},
+        'slm_reading': {'type': 'float', 'value': 82.0},
+        'slm_offset': {'type': 'float', 'value': 100.0},
+        'cal_file': {'type': 'str', 'value': 'cal_stim.wav'},
+
+        # Presentation level variables
+        'scaling_factor': {'type': 'float', 'value': -30.0},
+        'desired_spl': {'type': 'float', 'value': 60.0},
+        #'adj_pres_level': {'type': 'float', 'value': -30},        
     }
+
 
     def __init__(self):
         # Create session parameters file

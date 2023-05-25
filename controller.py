@@ -1,7 +1,11 @@
-""" Empty GUI. 
+""" GUI for MOA task using on-the-fly stimulus generation from 
+    provided .wav file. 
+
+    OOP design allows for easy swapping of stimulus-specific 
+    models. 
 
     Written by: Travis M. Moore
-    Created: June 23, 2022
+    Created: May 25, 2023
 """
 
 ###########
@@ -9,14 +13,12 @@
 ###########
 # Import GUI packages
 import tkinter as tk
-from tkinter import ttk
 from tkinter import messagebox
 
 # Import system packages
 import os
-import sys
 from pathlib import Path
-import time
+import random
 
 # Import misc packages
 import webbrowser
@@ -26,7 +28,7 @@ import markdown
 # Menu imports
 from menus import mainmenu
 # Function imports
-from functions import resource_path
+from functions import functions
 # Model imports
 from models import sessionmodel
 from models import audiomodel
@@ -55,7 +57,7 @@ class Application(tk.Tk):
         #############
         self.NAME = 'MOA Task Controller (OTF)'
         self.VERSION = '0.0.0'
-        self.EDITED = 'May 24, 2023'
+        self.EDITED = 'May 25, 2023'
 
         # Create menu settings dictionary
         self._menu_settings = {
@@ -64,13 +66,6 @@ class Application(tk.Tk):
             'last_edited': self.EDITED
         }
 
-        # Step sizes
-        self.STEPS = {
-            'bigup': 5,
-            'smallup': 2.5,
-            'bigdown': -5,
-            'smalldown': -2.5
-        }
 
         ######################################
         # Initialize Models, Menus and Views #
@@ -107,6 +102,12 @@ class Application(tk.Tk):
         self.main_frame = mainview.MainFrame(self, self._vars)
         self.main_frame.grid(row=0, column=0)
 
+        # Trial counter label
+        self.counter = 1
+        self.trial_var = tk.StringVar(value="Trial:")
+        tk.Label(self, textvariable=self.trial_var).grid(
+            row=1, column=0, sticky='w', padx=10)
+
         # Load menus
         menu = mainmenu.MainMenu(self, self._menu_settings)
         self.config(menu=menu)
@@ -130,7 +131,7 @@ class Application(tk.Tk):
             # Calibration dialog commands
             '<<CalPlay>>': lambda _: self.play_calibration_file(),
             '<<CalStop>>': lambda _: self.stop_calibration_file(),
-            '<<CalibrationSubmit>>': lambda _: self._calc_level(),
+            '<<CalibrationSubmit>>': lambda _: self._calc_offset(),
 
             # Audio dialog commands
             '<<AudioDialogSubmit>>': lambda _: self._save_sessionpars(),
@@ -200,6 +201,17 @@ class Application(tk.Tk):
     # Main View Functions #
     #######################
     def _on_start(self):
+        """ Increases trial counter, and if not at end of task, then 
+            generates a new, random starting level, applies offset,
+            and calls play function.
+        """
+        self.trial_var.set(f"Trial {self.counter} of " + 
+            f"{self.sessionpars['num_trials'].get()}")
+
+        print(f"\ncontroller: Setting random starting level")
+        starting_level = random.randint(50,70)
+        self._calc_level(starting_level)
+
         print(f"\ncontroller: Creating new stimulus instance")
         try:
             # Create stimulus
@@ -216,7 +228,14 @@ class Application(tk.Tk):
 
 
     def _on_arrow_button(self):
-        step = self.STEPS[self._vars['button_id'].get()]
+        # Step sizes
+        self.steps = {
+            'bigup': self.sessionpars['big_step'].get(),
+            'smallup': self.sessionpars['small_step'].get(),
+            'bigdown': -self.sessionpars['big_step'].get(),
+            'smalldown': -self.sessionpars['small_step'].get(),
+        }
+        step = self.steps[self._vars['button_id'].get()]
         scaling = self.sessionpars['scaling_factor'].get()
         print(f"\ncontroller: {self._vars['button_id'].get()} pressed.")
         print(f"controller: Adding {step}")
@@ -241,19 +260,29 @@ class Application(tk.Tk):
         print('controller: Calling save record function...')
         self.csvmodel.save_record(data)
 
+        # Increase counter and check for end of task
+        self.counter += 1
+        if self.counter > self.sessionpars['num_trials'].get():
+            messagebox.showinfo(
+                title="Done!",
+                message="You have finished this task.",
+                detail="Please wait for the investigator."
+            )
+            self.destroy()
+
 
     ############################
     # Session Dialog Functions #
     ############################
     def _show_session_dialog(self):
-        """ Show session parameter dialog
+        """ Show session parameter dialog.
         """
         print("\ncontroller: Calling session dialog...")
         sessionview.SessionDialog(self, self.sessionpars)
 
 
     def _load_sessionpars(self):
-        """ Load parameters into self.sessionpars dict 
+        """ Load parameters into self.sessionpars dict. 
         """
         vartypes = {
         'bool': tk.BooleanVar,
@@ -272,7 +301,7 @@ class Application(tk.Tk):
 
 
     def _save_sessionpars(self, *_):
-        """ Save current runtime parameters to file 
+        """ Save current runtime parameters to file.
         """
         print("\ncontroller: Calling sessionpar model set and save funcs...")
         for key, variable in self.sessionpars.items():
@@ -284,13 +313,13 @@ class Application(tk.Tk):
     # Tools Menu Functions #
     ########################
     def _show_audio_dialog(self):
-        """ Show audio settings dialog
+        """ Show audio settings dialog.
         """
         print("\ncontroller: Calling audio dialog...")
         audioview.AudioDialog(self, self.sessionpars)
 
     def _show_calibration_dialog(self):
-        """ Display the calibration dialog window
+        """ Display the calibration dialog window.
         """
         print("\ncontroller: Calling calibration dialog...")
         calibrationview.CalibrationDialog(self, self.sessionpars)
@@ -300,7 +329,7 @@ class Application(tk.Tk):
     # Calibration Dialog Functions #
     ################################
     def play_calibration_file(self):
-        """ Load calibration file and present
+        """ Load calibration file and present.
         """
         # Get calibration file
         self.calmodel._get_cal_file()
@@ -310,17 +339,26 @@ class Application(tk.Tk):
 
 
     def stop_calibration_file(self):
-        """ Stop playback of calibration file
+        """ Stop playback of calibration file.
         """
         # Stop calibration playback
         self.calmodel.stop_cal()
 
 
-    def _calc_level(self):
+    def _calc_offset(self):
+        """ Calculate offset based on SLM reading.
+        """
         # Calculate new presentation level
-        self.calmodel._calc_level()
+        self.calmodel._calc_offset()
+        # Save level - this must be called here!
+        self._save_sessionpars()
 
-        # Save level
+
+    def _calc_level(self, desired_spl):
+        """ Calculate new dB FS level using slm_offset.
+        """
+        self.calmodel._calc_level(desired_spl)
+        # Save level - this must be called here!
         self._save_sessionpars()
 
 
@@ -332,7 +370,7 @@ class Application(tk.Tk):
         """
         print("controller: Looking for help file in compiled " +
             "version temp location...")
-        help_file = resource_path.resource_path('README\\README.html')
+        help_file = functions.resource_path('README\\README.html')
         #help_file = self.resource_path('README\\README.html')
         file_exists = os.access(help_file, os.F_OK)
         if not file_exists:
