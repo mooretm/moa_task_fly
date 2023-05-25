@@ -20,7 +20,7 @@ class SessionParsModel:
         # Session variables
         'subject': {'type': 'str', 'value': '999'},
         'condition': {'type': 'str', 'value': 'TEST'},
-        'pres_level': {'type': 'float', 'value': 65.0},
+        #'pres_level': {'type': 'float', 'value': 65.0},
         'num_trials': {'type': 'int', 'value': 1},
         
         # Stimulus variables
@@ -44,9 +44,9 @@ class SessionParsModel:
         'cal_file': {'type': 'str', 'value': 'cal_stim.wav'},
 
         # Presentation level variables
+        #'desired_spl': {'type': 'float', 'value': 60.0},
         'scaling_factor': {'type': 'float', 'value': -30.0},
-        'desired_spl': {'type': 'float', 'value': 60.0},
-        #'adj_pres_level': {'type': 'float', 'value': -30},        
+        'db_level': {'type': 'float', 'value': -30.0},     
     }
 
 

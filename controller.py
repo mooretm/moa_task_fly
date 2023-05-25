@@ -209,7 +209,7 @@ class Application(tk.Tk):
             f"{self.sessionpars['num_trials'].get()}")
 
         print(f"\ncontroller: Setting random starting level")
-        starting_level = random.randint(50,70)
+        starting_level = random.randint(90, 110)
         self._calc_level(starting_level)
 
         print(f"\ncontroller: Creating new stimulus instance")
@@ -217,8 +217,8 @@ class Application(tk.Tk):
             # Create stimulus
             self.a = audiomodel.Audio(Path(self.sessionpars['stim_file_path'].get()))
             t = tickmodel.TickModel(self.sessionpars, self.a)
-            self.singleton = t.make_train()
-            self.a.signal = self.singleton
+            singleton = t.make_train()
+            self.a.signal = singleton
         except FileNotFoundError:
             print("\ncontroller: Cannot find audio! Aborting.")
             return
@@ -236,13 +236,17 @@ class Application(tk.Tk):
             'smalldown': -self.sessionpars['small_step'].get(),
         }
         step = self.steps[self._vars['button_id'].get()]
+
+        # Get existing scaling factor
         scaling = self.sessionpars['scaling_factor'].get()
         print(f"\ncontroller: {self._vars['button_id'].get()} pressed.")
         print(f"controller: Adding {step}")
         print(f"controller: Previous scaling factor: {scaling}")
         scaling += step
         self.sessionpars['scaling_factor'].set(scaling)
+        self.sessionpars['db_level'].set(scaling + self.sessionpars['slm_offset'].get())
         print(f"controller: New scaling factor: {scaling}")
+        print(f"controller: New dB level: {self.sessionpars['db_level'].get()}")
 
         # Present audio
         self._play()
@@ -252,13 +256,14 @@ class Application(tk.Tk):
         """ Format values and send to csv model.
         """
         # Get tk variable values
-        data = dict()
-        for key in self.sessionpars:
-            data[key] = self.sessionpars[key].get()
+        # data = dict()
+        # for key in self.sessionpars:
+        #     data[key] = self.sessionpars[key].get()
 
         # Save data
         print('controller: Calling save record function...')
-        self.csvmodel.save_record(data)
+        #self.csvmodel.save_record(data)
+        self.csvmodel.save_record()
 
         # Increase counter and check for end of task
         self.counter += 1

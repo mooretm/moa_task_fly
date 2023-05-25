@@ -24,7 +24,8 @@ class CSVModel:
         self.datestamp = datetime.now().strftime("%Y_%b_%d_%H%M")
 
     
-    def save_record(self, data):
+    #def save_record(self, data):
+    def save_record(self):
         """ Save a dictionary of data to .csv file 
         """
         # Check for existing data folder
@@ -51,6 +52,20 @@ class CSVModel:
         ):
             msg = f"\ncsvmodel: Permission denied accessing file: {filename}"
             raise PermissionError(msg)
+
+        # Get tk variable values
+        data = dict()
+        for key in self.sessionpars:
+            data[key] = self.sessionpars[key].get()
+
+        # Drop unwanted dict items
+        [data.pop(key) for key in [
+            'stim_file_path', 
+            'cal_file',
+            'audio_device',
+            'speaker_number'
+            ]
+        ]
 
         # Write file
         newfile = not self.file.exists()

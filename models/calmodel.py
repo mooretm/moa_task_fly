@@ -61,10 +61,12 @@ class CalModel:
 
     def _calc_level(self, desired_spl):
         # Calculate presentation level
-        self.sessionpars['desired_spl'].set(desired_spl)
-        self.sessionpars['scaling_factor'].set(desired_spl - self.sessionpars['slm_offset'].get())
-        print(f"calmodel: Desired level (dB): " +
-              f"{self.sessionpars['desired_spl'].get()}")
+        self.sessionpars['db_level'].set(desired_spl)
+        scaled_level = desired_spl - self.sessionpars['slm_offset'].get()
+        self.sessionpars['scaling_factor'].set(scaled_level)
+        print(f"calmodel: Desired level in dB: " +
+              f"{self.sessionpars['db_level'].get()}")
+        print(f"calmodel: Offset: {self.sessionpars['slm_offset'].get()}")
         print(f"calmodel: Scaling factor: " +
             f"{self.sessionpars['scaling_factor'].get()}")
 
