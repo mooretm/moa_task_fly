@@ -1,19 +1,19 @@
-<h1><strong>Base GUI</strong></h1>
+<h1><strong>MOA Task Controller (OTF)</strong></h1>
 <ul>
 <li>Written by: <strong>Travis M. Moore</strong></li>
-<li>Latest version: <strong>Version 0.0.0</strong></li>
-<li>Originally created: <strong>June 23, 2022</strong></li>
-<li>Last edited: <strong>April 28, 2023</strong>
+<li>Latest version: <strong>Version 0.2.0</strong></li>
+<li>Originally created: <strong>May 25, 2023</strong></li>
+<li>Last edited: <strong>June 01, 2023</strong>
 <br>
 <br></li>
 </ul>
 <hr />
 <h2>Description</h2>
-<ul>
-<li>Base GUI, ready to go!
+<p>This application provides a set of arrow controls useful for measuring participant perception using the method of adjustment. NOTE: the application <strong>DOES NOT</strong> use an adaptive staircase procedure. The Session dialog provides several customizations to create trains of stimuli using a single, brief, imported .wav file. </p>
+<p>"OTF" in the title stands for "on the fly", in reference to the application's ability to create novel stimuli based on a single instance from a provided .wav file.</p>
+<p>If you have a series of .wav files (i.e., you do not want to use the application to create stimuli), please use the regular version of the MOA Task Controller that expects a .wav file for each stimulus.
 <br>
-<br></li>
-</ul>
+<br></p>
 <hr />
 <h2>Getting Started</h2>
 <h3>Dependencies</h3>
@@ -33,7 +33,7 @@
 </ul>
 <hr />
 <h2>Compiling from Source</h2>
-<p><code>pyinstaller...</code>
+<p><code>pyinstaller --noconfirm --onefile --console --add-data "C:/Users/MooTra/Code/Python/moa_task_fly/assets/cal_stim.wav;." --add-data "C:/Users/MooTra/Code/Python/moa_task_fly/assets/README;README/" --add-data "C:/Users/MooTra/Code/Python/moa_task_fly/assets/images;images/"  "C:/Users/MooTra/Code/Python/moa_task_fly/controller.py"</code>
 <br>
 <br></p>
 <hr />

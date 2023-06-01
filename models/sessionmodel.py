@@ -20,7 +20,6 @@ class SessionParsModel:
         # Session variables
         'subject': {'type': 'str', 'value': '999'},
         'condition': {'type': 'str', 'value': 'TEST'},
-        #'pres_level': {'type': 'float', 'value': 65.0},
         'num_trials': {'type': 'int', 'value': 1},
         
         # Stimulus variables
@@ -31,6 +30,8 @@ class SessionParsModel:
         'small_step': {'type': 'float', 'value': 2.5},
         'max_output': {'type': 'float', 'value': 85.0},
         'min_output': {'type': 'float', 'value': 50.0},
+        'max_start': {'type': 'float', 'value': 70.0},
+        'min_start': {'type': 'float', 'value': 50.0},
         'stim_file_path': {'type': 'str', 'value': 'Please select a .wav file'},
 
         # Audio device variables
@@ -44,9 +45,12 @@ class SessionParsModel:
         'cal_file': {'type': 'str', 'value': 'cal_stim.wav'},
 
         # Presentation level variables
-        #'desired_spl': {'type': 'float', 'value': 60.0},
         'scaling_factor': {'type': 'float', 'value': -30.0},
-        'db_level': {'type': 'float', 'value': -30.0},     
+        'db_level': {'type': 'float', 'value': -30.0},
+
+        # Misc variables
+        'check_for_updates': {'type': 'str', 'value': 'yes'},
+        'update_path': {'type': 'str', 'value': r'\\starfile\Public\Temp\MooreT\Custom Software\version_library.csv'},
     }
 
 

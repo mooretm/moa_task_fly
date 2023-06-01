@@ -56,7 +56,7 @@ class ArrowGroup(tk.Frame):
         rows = [0,0,1,1]
         cols = [1,2,1,2]
         for idx, key in enumerate(command_args):
-            img = resource_path(image_names[idx])
+            img = resource_path('images\\' + image_names[idx])
             btn = ttk.Button(self, takefocus=0,
                 command=command_args[key])
             # First look for assets in compiled temp location, 

@@ -52,7 +52,10 @@ class MainFrame(ttk.Frame):
         frm_main.grid(column=5, row=5)
 
         # Arrow buttons frame
-        self.frm_arrows = ttk.LabelFrame(frm_main, text="Presentation Controls")
+        self.arrow_frm_text = tk.StringVar(value='Presentation Controls')
+        self.arrow_frm_label = ttk.Label(textvariable=self.arrow_frm_text)
+        #self.frm_arrows = ttk.LabelFrame(frm_main, text="Presentation Controls")
+        self.frm_arrows = ttk.LabelFrame(frm_main, labelwidget=self.arrow_frm_label)
         self.frm_arrows.grid(row=1, column=0, padx=15, pady=15)
 
         # Button frame

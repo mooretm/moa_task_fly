@@ -56,8 +56,8 @@ class Application(tk.Tk):
         # Constants #
         #############
         self.NAME = 'MOA Task Controller (OTF)'
-        self.VERSION = '0.0.0'
-        self.EDITED = 'May 25, 2023'
+        self.VERSION = '0.2.0'
+        self.EDITED = 'June 01, 2023'
 
         # Create menu settings dictionary
         self._menu_settings = {
@@ -97,10 +97,10 @@ class Application(tk.Tk):
         self.calmodel = calmodel.CalModel(self.sessionpars)
 
         # Load main view
-        self.grid_columnconfigure(0, weight=1) # center widget
-        self.grid_rowconfigure(0, weight=1) # center widget
         self.main_frame = mainview.MainFrame(self, self._vars)
         self.main_frame.grid(row=0, column=0)
+        self.grid_columnconfigure(0, weight=1) # center widget
+        self.grid_rowconfigure(0, weight=1) # center widget
 
         # Trial counter label
         self.counter = 1
@@ -151,10 +151,12 @@ class Application(tk.Tk):
         self.center_window()
 
         # Check for updates
-        _filepath = r'\\starfile\Public\Temp\MooreT\Custom Software\version_library.csv'
-        u = updatermodel.VersionChecker(_filepath, self.NAME, self.VERSION)
-        if not u.current:
-            self.destroy()
+        if self.sessionpars['check_for_updates'].get() == 'yes':
+            #_filepath = r'\\starfile\Public\Temp\MooreT\Custom Software\version_library.csv'
+            _filepath = self.sessionpars['update_path'].get()
+            u = updatermodel.VersionChecker(_filepath, self.NAME, self.VERSION)
+            if not u.current:
+                self.destroy()
 
 
     #####################
@@ -200,17 +202,37 @@ class Application(tk.Tk):
     #######################
     # Main View Functions #
     #######################
+    def _set_starting_level(self):
+        print(f"\ncontroller: Setting random starting level")
+        # Get random integer within range
+        #starting_level = random.randint(50, 70)
+        starting_level = random.randint(
+            self.sessionpars['min_start'].get(), 
+            self.sessionpars['max_start'].get()
+        )
+
+        # Test that random starting level is within min/max limits
+        # Assign to nearest limit
+        if starting_level > self.sessionpars['max_output'].get():
+            starting_level = self.sessionpars['max_output'].get()
+        if starting_level < self.sessionpars['min_output'].get():
+            starting_level = self.sessionpars['min_output'].get()
+
+        # Convert to dB using offset
+        self._calc_level(starting_level)
+
+
     def _on_start(self):
         """ Increases trial counter, and if not at end of task, then 
             generates a new, random starting level, applies offset,
             and calls play function.
         """
+        # Update trial label
         self.trial_var.set(f"Trial {self.counter} of " + 
             f"{self.sessionpars['num_trials'].get()}")
 
-        print(f"\ncontroller: Setting random starting level")
-        starting_level = random.randint(90, 110)
-        self._calc_level(starting_level)
+        # Update sessionpars['scaling_factor'] with starting level
+        self._set_starting_level()
 
         print(f"\ncontroller: Creating new stimulus instance")
         try:
@@ -225,6 +247,31 @@ class Application(tk.Tk):
 
         # Play stimulus
         self._play()
+
+
+    def _reset_arrow_message(self):
+        self.main_frame.arrow_frm_text.set("Presentation Controls")
+        self.main_frame.arrow_frm_label.config(foreground='black')
+
+
+    def _check_limits(self, scaling):
+        # Check that scaling factor is within limits
+        max = self.sessionpars['max_output'].get() - \
+            self.sessionpars['slm_offset'].get()
+        min = self.sessionpars['min_output'].get() - \
+            self.sessionpars['slm_offset'].get()
+        if scaling > max:
+            scaling = max
+            self.main_frame.arrow_frm_text.set('UPPER LIMIT')
+            self.main_frame.arrow_frm_label.config(foreground='red')
+            self.after(2000, lambda: self._reset_arrow_message())
+        if scaling < min:
+            scaling = min
+            self.main_frame.arrow_frm_text.set('LOWER LIMIT')
+            self.main_frame.arrow_frm_label.config(foreground='red')
+            self.after(2000, lambda: self._reset_arrow_message())
+        self.update_idletasks()
+        return scaling
 
 
     def _on_arrow_button(self):
@@ -242,7 +289,14 @@ class Application(tk.Tk):
         print(f"\ncontroller: {self._vars['button_id'].get()} pressed.")
         print(f"controller: Adding {step}")
         print(f"controller: Previous scaling factor: {scaling}")
+
+        # Adjusting scaling factor based on button press
         scaling += step
+
+        # Check that new scaling factor is within limits
+        scaling = self._check_limits(scaling)
+
+        # Save scaling factor
         self.sessionpars['scaling_factor'].set(scaling)
         self.sessionpars['db_level'].set(scaling + self.sessionpars['slm_offset'].get())
         print(f"controller: New scaling factor: {scaling}")

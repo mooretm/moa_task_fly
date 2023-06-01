@@ -63,7 +63,9 @@ class CSVModel:
             'stim_file_path', 
             'cal_file',
             'audio_device',
-            'speaker_number'
+            'speaker_number',
+            'check_for_updates',
+            'update_path',
             ]
         ]
 

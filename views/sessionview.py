@@ -86,55 +86,70 @@ class SessionDialog(tk.Toplevel):
 
             # Stimulus Paramters Frame
             # Column 1
-            # Big step
-            ttk.Label(frm_options, text="Big Step (dB):"
-                ).grid(row=5, column=5, sticky='e', **widget_options)
-            ttk.Entry(frm_options, width=10, 
-                textvariable=self.sessionpars['big_step']
-                ).grid(row=5, column=10, sticky='w')
-
-            # Small step
-            ttk.Label(frm_options, text="Small Step (dB):"
-                ).grid(row=10, column=5, sticky='e', **widget_options)
-            ttk.Entry(frm_options, width=10, 
-                textvariable=self.sessionpars['small_step']
-                ).grid(row=10, column=10, sticky='w')
-            
-            # Max output
-            ttk.Label(frm_options, text="Max Output (dB):"
-                ).grid(row=15, column=5, sticky='e', **widget_options)
-            ttk.Entry(frm_options, width=10, 
-                textvariable=self.sessionpars['max_output']
-                ).grid(row=15, column=10, sticky='w')
-            
-            # Min output
-            ttk.Label(frm_options, text="Min Output (dB):"
-                ).grid(row=20, column=5, sticky='e', **widget_options)
-            ttk.Entry(frm_options, width=10, 
-                textvariable=self.sessionpars['min_output']
-                ).grid(row=20, column=10, sticky='w')
-
-            # Column 2
             # ISI
             ttk.Label(frm_options, text="ISI (ms):"
-                ).grid(row=5, column=15, sticky='e', **widget_options)
+                ).grid(row=5, column=5, sticky='e', **widget_options)
             ttk.Entry(frm_options, width=10, 
                 textvariable=self.sessionpars['isi']
-                ).grid(row=5, column=20, sticky='w')
+                ).grid(row=5, column=10, sticky='w')
 
             # Jitter
             ttk.Label(frm_options, text="Jitter (ms):"
-                ).grid(row=10, column=15, sticky='e', **widget_options)
+                ).grid(row=10, column=5, sticky='e', **widget_options)
             ttk.Entry(frm_options, width=10, 
                 textvariable=self.sessionpars['jitter']
-                ).grid(row=10, column=20, sticky='w')
+                ).grid(row=10, column=10, sticky='w')
 
             # Train Reps
             ttk.Label(frm_options, text="Train Reps:"
-                ).grid(row=15, column=15, sticky='e', **widget_options)
+                ).grid(row=15, column=5, sticky='e', **widget_options)
             ttk.Entry(frm_options, width=10, 
                 textvariable=self.sessionpars['train_reps']
+                ).grid(row=15, column=10, sticky='w')
+            
+            # Big step
+            ttk.Label(frm_options, text="Big Step (dB):"
+                ).grid(row=20, column=5, sticky='e', **widget_options)
+            ttk.Entry(frm_options, width=10, 
+                textvariable=self.sessionpars['big_step']
+                ).grid(row=20, column=10, sticky='w')
+
+            # Small step
+            ttk.Label(frm_options, text="Small Step (dB):"
+                ).grid(row=25, column=5, sticky='e', **widget_options)
+            ttk.Entry(frm_options, width=10, 
+                textvariable=self.sessionpars['small_step']
+                ).grid(row=25, column=10, sticky='w')
+            
+
+            # Column 2
+            # Max output
+            ttk.Label(frm_options, text="Max Output (dB):"
+                ).grid(row=5, column=15, sticky='e', **widget_options)
+            ttk.Entry(frm_options, width=10, 
+                textvariable=self.sessionpars['max_output']
+                ).grid(row=5, column=20, sticky='w')
+            
+            # Min output
+            ttk.Label(frm_options, text="Min Output (dB):"
+                ).grid(row=10, column=15, sticky='e', **widget_options)
+            ttk.Entry(frm_options, width=10, 
+                textvariable=self.sessionpars['min_output']
+                ).grid(row=10, column=20, sticky='w')
+
+            # Max start
+            ttk.Label(frm_options, text="Max Start (dB):"
+                ).grid(row=15, column=15, sticky='e', **widget_options)
+            ttk.Entry(frm_options, width=10, 
+                textvariable=self.sessionpars['max_start']
                 ).grid(row=15, column=20, sticky='w')
+
+            # Min start
+            ttk.Label(frm_options, text="Min Start (dB):"
+                ).grid(row=20, column=15, sticky='e', **widget_options)
+            ttk.Entry(frm_options, width=10, 
+                textvariable=self.sessionpars['min_start']
+                ).grid(row=20, column=20, sticky='w')
             
 
             # File Browsing Frame

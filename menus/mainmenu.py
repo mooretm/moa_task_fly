@@ -113,7 +113,7 @@ class MainMenu(tk.Menu):
         about_detail = (
             'Written by: Travis M. Moore\n' +
             'Version {}\n'.format(self._settings['version']) +
-            'Created: June 23, 2022\n'
+            'Created: May 25, 2023\n'
             'Last edited: {}'.format(self._settings['last_edited'])
         )
         messagebox.showinfo(
