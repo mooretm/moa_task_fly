@@ -56,8 +56,8 @@ class Application(tk.Tk):
         # Constants #
         #############
         self.NAME = 'MOA Task Controller (OTF)'
-        self.VERSION = '0.2.0'
-        self.EDITED = 'June 01, 2023'
+        self.VERSION = '0.2.1'
+        self.EDITED = 'July 24, 2023'
 
         # Create menu settings dictionary
         self._menu_settings = {

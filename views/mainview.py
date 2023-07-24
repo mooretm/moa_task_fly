@@ -131,11 +131,12 @@ class MainFrame(ttk.Frame):
         # Update buttons
         self.button_text.set("Repeat")
         self.btn_submit.config(state="enabled")
-        
+   
 
     def _on_submit(self):
         # Send save data event to app
         self.button_text.set("Start")
+        self.btn_submit.config(state='disabled')
         
         # Recreate stimulus on each new trial
         # In this case, changing the jitter

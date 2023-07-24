@@ -2,6 +2,17 @@
 
 ---
 
+## v0.2.1
+
+Date: July 24, 2023
+
+### Minor Changes
+1. Submit button is disabled when pressed to avoid accidental submission of multiple responses.
+<br>
+<br>
+
+---
+
 ## v0.2.0
 
 Date: June 01, 2023
