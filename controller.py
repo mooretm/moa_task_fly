@@ -56,8 +56,8 @@ class Application(tk.Tk):
         # Constants #
         #############
         self.NAME = 'MOA Task Controller (OTF)'
-        self.VERSION = '0.2.1'
-        self.EDITED = 'July 24, 2023'
+        self.VERSION = '0.2.2'
+        self.EDITED = 'July 27, 2023'
 
         # Create menu settings dictionary
         self._menu_settings = {
@@ -121,6 +121,9 @@ class Application(tk.Tk):
             # Tools menu
             '<<ToolsAudioSettings>>': lambda _: self._show_audio_dialog(),
             '<<ToolsCalibration>>': lambda _: self._show_calibration_dialog(),
+
+            # Playback menu
+            '<<PlaybackStop>>': lambda _: self.stop_audio(),
 
             # Help menu
             '<<Help>>': lambda _: self._show_help(),
@@ -382,6 +385,13 @@ class Application(tk.Tk):
         """
         print("\ncontroller: Calling calibration dialog...")
         calibrationview.CalibrationDialog(self, self.sessionpars)
+
+
+    ########################
+    # Tools Menu Functions #
+    ########################
+    def stop_audio(self):
+        self.a.stop()
 
 
     ################################

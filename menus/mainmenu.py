@@ -19,7 +19,7 @@ class MainMenu(tk.Menu):
     
     def _bind_accelerators(self):
         #self.bind_all('<space>', self._event('<<PlaybackStart>>'))
-        #self.bind_all('<Control-c>', self._event('<<PlaybackStop>>'))
+        self.bind_all('<Control-c>', self._event('<<PlaybackStop>>'))
         self.bind_all('<Control-q>', self._event('<<FileQuit>>'))
 
 
@@ -66,19 +66,19 @@ class MainMenu(tk.Menu):
         #################
         # Playback Menu #
         #################
-        # playback_menu = tk.Menu(self, tearoff=False)
+        playback_menu = tk.Menu(self, tearoff=False)
         # playback_menu.add_command(
         #     label="Start Audio",
         #     command=self._event('<<PlaybackStart>>'),
         #     accelerator='Spacebar'
         # )
-        # playback_menu.add_separator()
-        # playback_menu.add_command(
-        #     label="Stop Audio",
-        #     command=self._event('<<PlaybackStop>>'),
-        #     accelerator='Ctrl+C'
-        # )
-        # self.add_cascade(label='Playback', menu=playback_menu)
+        #playback_menu.add_separator()
+        playback_menu.add_command(
+            label="Stop Audio",
+            command=self._event('<<PlaybackStop>>'),
+            accelerator='Ctrl+C'
+        )
+        self.add_cascade(label='Playback', menu=playback_menu)
 
 
         #############

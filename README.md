@@ -1,9 +1,9 @@
 # **MOA Task Controller (OTF)**
 
 - Written by: **Travis M. Moore**
-- Latest version: **Version 0.2.1**
+- Latest version: **Version 0.2.2**
 - Originally created: **May 25, 2023**
-- Last edited: **July 24, 2023**
+- Last edited: **July 27, 2023**
 <br>
 <br>
 

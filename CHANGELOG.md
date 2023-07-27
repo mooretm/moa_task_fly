@@ -2,6 +2,17 @@
 
 ---
 
+## v0.2.2
+
+Date: July 27, 2023
+
+### Minor Changes
+1. Added Playback menu with command to stop audio playback.
+<br>
+<br>
+
+---
+
 ## v0.2.1
 
 Date: July 24, 2023
