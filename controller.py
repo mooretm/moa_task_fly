@@ -56,8 +56,8 @@ class Application(tk.Tk):
         # Constants #
         #############
         self.NAME = 'MOA Task Controller (OTF)'
-        self.VERSION = '0.2.2'
-        self.EDITED = 'July 27, 2023'
+        self.VERSION = '0.2.3'
+        self.EDITED = 'July 31, 2023'
 
         # Create menu settings dictionary
         self._menu_settings = {
@@ -116,6 +116,7 @@ class Application(tk.Tk):
         event_callbacks = {
             # File menu
             '<<FileSession>>': lambda _: self._show_session_dialog(),
+            #'<<FileExport>>': lambda _: self._export_wav_file(),
             '<<FileQuit>>': lambda _: self._quit(),
 
             # Tools menu
@@ -130,6 +131,7 @@ class Application(tk.Tk):
 
             # Session dialog commands
             '<<SessionSubmit>>': lambda _: self._save_sessionpars(),
+            '<<SessionExport>>': lambda _: self._export_wav_file(),
 
             # Calibration dialog commands
             '<<CalPlay>>': lambda _: self.play_calibration_file(),
@@ -237,28 +239,45 @@ class Application(tk.Tk):
         # Update sessionpars['scaling_factor'] with starting level
         self._set_starting_level()
 
-        print(f"\ncontroller: Creating new stimulus instance")
         try:
-            # Create stimulus
-            self.a = audiomodel.Audio(Path(self.sessionpars['stim_file_path'].get()))
-            t = tickmodel.TickModel(self.sessionpars, self.a)
-            singleton = t.make_train()
-            self.a.signal = singleton
+            self._create_stimulus()
         except FileNotFoundError:
-            print("\ncontroller: Cannot find audio! Aborting.")
+            messagebox.showerror(
+                title="File Not Found",
+                message="No audio file found!"
+            )
             return
 
         # Play stimulus
         self._play()
 
 
+    def _create_stimulus(self):
+        """ Create audio object and pass it to tick stimulus model.
+        """
+        print(f"\ncontroller: Creating new stimulus instance")
+        try:
+            # Create stimulus
+            self.a = audiomodel.Audio(Path(self.sessionpars['stim_file_path'].get()))
+            t = tickmodel.TickModel(self.sessionpars, self.a)
+            train = t.make_train()
+            self.a.signal = train
+        except FileNotFoundError:
+            print("\ncontroller: Cannot find audio! Aborting.")
+            raise
+
+
     def _reset_arrow_message(self):
+        """ Changes the label frame title to the default.
+            Used after an upper/lower limit notification.
+        """
         self.main_frame.arrow_frm_text.set("Presentation Controls")
         self.main_frame.arrow_frm_label.config(foreground='black')
 
 
     def _check_limits(self, scaling):
-        # Check that scaling factor is within limits
+        """ Check that scaling factor is within limits.
+        """
         max = self.sessionpars['max_output'].get() - \
             self.sessionpars['slm_offset'].get()
         min = self.sessionpars['min_output'].get() - \
@@ -371,6 +390,23 @@ class Application(tk.Tk):
             self.sessionpars_model.save()
 
 
+    def _export_wav_file(self):
+        #print(f"ISI: {self.sessionpars['isi'].get()}")
+        try:
+            self._create_stimulus()
+        except FileNotFoundError:
+            messagebox.showerror(
+                title="File Not Found",
+                message="No audio file found!"
+            )
+            return
+
+        name = f"isi{self.sessionpars['isi'].get()}_" + \
+            f"jitter{self.sessionpars['jitter'].get()}_" + \
+            f"reps{self.sessionpars['train_reps'].get()}.wav"
+        self.a.write_audio(name)
+
+
     ########################
     # Tools Menu Functions #
     ########################
@@ -391,7 +427,14 @@ class Application(tk.Tk):
     # Tools Menu Functions #
     ########################
     def stop_audio(self):
-        self.a.stop()
+        try:
+            self.a.stop()
+        except AttributeError:
+            print("\ncontroller: Stop audio selected, but no audio to stop!")
+            # messagebox.showwarning(
+            #     title="Invalid Command",
+            #     message="There's no audio to stop!"
+            # )
 
 
     ################################

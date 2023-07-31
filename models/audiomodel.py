@@ -176,6 +176,17 @@ class Audio:
         raise Exception("audiomodel: Clipping occurred")
 
 
+    def write_audio(self, name=None):
+        """ Write stimulus to .wav file.
+        """
+        if not name:
+            name='exported_stimulus.wav'
+
+        print(f"\naudiomodel: Attempting to write {name}...")
+        sf.write(f'{name}', self.signal, self.fs)
+        print("audiomodel: Done")
+
+
     @staticmethod
     def db2mag(db):
         """ 

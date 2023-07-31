@@ -150,6 +150,11 @@ class SessionDialog(tk.Toplevel):
             ttk.Entry(frm_options, width=10, 
                 textvariable=self.sessionpars['min_start']
                 ).grid(row=20, column=20, sticky='w')
+
+            # Write stimulus button
+            ttk.Button(frm_options, text="Export as .wav", 
+                command=self._on_export, takefocus=0).grid(row=30, 
+                column=5, padx=10, pady=10, sticky='w')
             
 
             # File Browsing Frame
@@ -224,6 +229,11 @@ class SessionDialog(tk.Toplevel):
     #         )
 
 
+    def _on_export(self):
+        print("\nsessionview: Sending export event to controller")
+        self.parent.event_generate('<<SessionExport>>')
+
+
     def _on_submit(self):
         """ Check number of presentations != 0.
             Send submit event to controller.
@@ -231,6 +241,6 @@ class SessionDialog(tk.Toplevel):
         # # Make sure the number of presentations isn't 0
         # self._check_presentations()
 
-        print("\nsessionview: Sending save event to controller...")
+        print("\nsessionview: Sending save event to controller")
         self.parent.event_generate('<<SessionSubmit>>')
         self.destroy()

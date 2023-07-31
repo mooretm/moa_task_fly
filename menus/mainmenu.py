@@ -38,6 +38,11 @@ class MainMenu(tk.Menu):
             command=self._event('<<FileSession>>')
         )
         file_menu.add_separator()
+        # file_menu.add_command(
+        #     label="Export stimulus",
+        #     command=self._event('<<FileExport>>')
+        # )
+        # file_menu.add_separator()
         file_menu.add_command(
             label="Quit",
             command=self._event('<<FileQuit>>'),

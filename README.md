@@ -1,9 +1,9 @@
 # **MOA Task Controller (OTF)**
 
 - Written by: **Travis M. Moore**
-- Latest version: **Version 0.2.2**
+- Latest version: **Version 0.2.3**
 - Originally created: **May 25, 2023**
-- Last edited: **July 27, 2023**
+- Last edited: **July 31, 2023**
 <br>
 <br>
 
@@ -33,6 +33,17 @@ If you have a series of .wav files (i.e., you do not want to use the application
 
 ### First Use
 - Double-click to start the application for the first time.
+<br>
+<br>
+
+---
+
+## Session Window
+
+### Exporting a stimulus
+This task controller can export a stimulus, based on the values entered in the Session Window's "Stimulus Options" section. Simply enter the desired stimulus values, then click the "Export as .wav" button. A .wav file will be written to the running app's directory. 
+
+- NOTE: A new stimulus will be created when starting the session, also based on the values entered in the Session Window's "Stimulus Options" section; however, any values that are randomly applied, for example jitter, will differ between the exported .wav file and the newly-generated stimulus on session start. 
 <br>
 <br>
 

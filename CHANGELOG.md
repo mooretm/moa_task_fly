@@ -2,6 +2,18 @@
 
 ---
 
+## v0.2.3
+
+Date: July 31, 2023
+
+### Minor Changes
+1. Added button on Session dialog to export a stimulus .wav file using the arguments entered in the Session dialog. 
+2. Added new "write_audio" function to audiomodel. Optionally takes a name as an input argument.
+<br>
+<br>
+
+---
+
 ## v0.2.2
 
 Date: July 27, 2023
