@@ -1,4 +1,4 @@
-""" Main view for Vesta
+""" Main view for MOA task on the fly.
 """
 
 ###########
